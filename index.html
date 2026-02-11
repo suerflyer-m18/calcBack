@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>バック電卓</title>
+</head>
+<body>
+
+<h2>バック計算</h2>
+
+<h3>① コース数入力</h3>
+80分：<input type="number" id="c80" value="0"><br>
+100分：<input type="number" id="c100" value="0"><br>
+120分：<input type="number" id="c120" value="0"><br>
+
+<h3>② 指名</h3>
+<label><input type="checkbox" id="shimei"> 指名あり (+3000)</label><br>
+
+<h3>③ オプション</h3>
+<label><input type="checkbox" id="option"> オプションあり (+1000)</label><br><br>
+
+<button onclick="calc()">計算</button>
+
+<h2>合計バック：<span id="result">0</span> 円</h2>
+
+<script>
+const backMaster = {
+  80: 10000,
+  100: 12000,
+  120: 15000
+};
+
+const shimeiMaster = 3000;
+const optionMaster = 1000;
+
+function calc() {
+  const c80 = Number(document.getElementById("c80").value);
+  const c100 = Number(document.getElementById("c100").value);
+  const c120 = Number(document.getElementById("c120").value);
+
+  let total =
+    c80 * backMaster[80] +
+    c100 * backMaster[100] +
+    c120 * backMaster[120];
+
+  if (document.getElementById("shimei").checked) {
+    total += shimeiMaster;
+  }
+
+  if (document.getElementById("option").checked) {
+    total += optionMaster;
+  }
+
+  document.getElementById("result").innerText = total.toLocaleString();
+}
+</script>
+
+</body>
+</html>
