@@ -1,58 +1,184 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>バック電卓</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>バック計算ツール</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f4f6f8;
+}
+
+.container {
+  max-width: 480px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+input {
+  width: 70px;
+  padding: 5px;
+  font-size: 16px;
+}
+
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f0f4ff;
+  border-radius: 10px;
+}
+
+.result div {
+  margin-bottom: 8px;
+}
+
+.total {
+  font-size: 22px;
+  font-weight: bold;
+  color: #1a73e8;
+}
+
+.master {
+  margin-top: 30px;
+  font-size: 14px;
+  background: #fafafa;
+  padding: 15px;
+  border-radius: 10px;
+}
+</style>
 </head>
+
 <body>
 
-<h2>バック計算</h2>
+<div class="container">
 
-<h3>① コース数入力</h3>
-80分：<input type="number" id="c80" value="0"><br>
-100分：<input type="number" id="c100" value="0"><br>
-120分：<input type="number" id="c120" value="0"><br>
+<h2>バック計算ツール</h2>
 
-<h3>② 指名</h3>
-<label><input type="checkbox" id="shimei"> 指名あり (+3000)</label><br>
+<div class="section">
+  <h3>コース数</h3>
 
-<h3>③ オプション</h3>
-<label><input type="checkbox" id="option"> オプションあり (+1000)</label><br><br>
+  <div class="row">40分 <input type="number" id="c40" value="0" min="0"></div>
+  <div class="row">60分 <input type="number" id="c60" value="0" min="0"></div>
+  <div class="row">80分 <input type="number" id="c80" value="0" min="0"></div>
+  <div class="row">100分 <input type="number" id="c100" value="0" min="0"></div>
+  <div class="row">120分 <input type="number" id="c120" value="0" min="0"></div>
+</div>
 
-<button onclick="calc()">計算</button>
+<div class="section">
+  <h3>指名</h3>
+  <div class="row">指名数 <input type="number" id="shimei" value="0" min="0"></div>
+</div>
 
-<h2>合計バック：<span id="result">0</span> 円</h2>
+<div class="section">
+  <h3>オプション</h3>
+  <div class="row">オプション数 <input type="number" id="option" value="0" min="0"></div>
+</div>
+
+<div class="result">
+  <div>元合計：<span id="baseTotal">0</span> 円</div>
+  <div>雑費（5%）：<span id="expense">0</span> 円</div>
+  <div class="total">最終合計：<span id="finalTotal">0</span> 円</div>
+</div>
+
+<div class="master">
+  <strong>▼ マスタ金額</strong><br><br>
+  40分：9,500円<br>
+  60分：14,000円<br>
+  80分：18,000円<br>
+  100分：24,000円<br>
+  120分：31,000円<br><br>
+  指名：3,000円<br>
+  オプション：1,000円
+</div>
+
+</div>
 
 <script>
+
 const backMaster = {
-  80: 10000,
-  100: 12000,
-  120: 15000
+  40: 9500,
+  60: 14000,
+  80: 18000,
+  100: 24000,
+  120: 31000
 };
 
-const shimeiMaster = 3000;
-const optionMaster = 1000;
+const shimeiUnit = 3000;
+const optionUnit = 1000;
 
-function calc() {
-  const c80 = Number(document.getElementById("c80").value);
-  const c100 = Number(document.getElementById("c100").value);
-  const c120 = Number(document.getElementById("c120").value);
+function calculate() {
 
-  let total =
+  const c40 = Number(c40_input.value);
+  const c60 = Number(c60_input.value);
+  const c80 = Number(c80_input.value);
+  const c100 = Number(c100_input.value);
+  const c120 = Number(c120_input.value);
+
+  const shimei = Number(shimei_input.value);
+  const option = Number(option_input.value);
+
+  let baseTotal =
+    c40 * backMaster[40] +
+    c60 * backMaster[60] +
     c80 * backMaster[80] +
     c100 * backMaster[100] +
-    c120 * backMaster[120];
+    c120 * backMaster[120] +
+    shimei * shimeiUnit +
+    option * optionUnit;
 
-  if (document.getElementById("shimei").checked) {
-    total += shimeiMaster;
-  }
+  let expense = baseTotal * 0.05;
+  expense = Math.floor(expense / 500) * 500;
+  if (expense > 5000) expense = 5000;
 
-  if (document.getElementById("option").checked) {
-    total += optionMaster;
-  }
+  let finalTotal = baseTotal - expense;
 
-  document.getElementById("result").innerText = total.toLocaleString();
+  baseTotal_span.innerText = baseTotal.toLocaleString();
+  expense_span.innerText = expense.toLocaleString();
+  finalTotal_span.innerText = finalTotal.toLocaleString();
 }
+
+// 要素取得（短縮）
+const c40_input = document.getElementById("c40");
+const c60_input = document.getElementById("c60");
+const c80_input = document.getElementById("c80");
+const c100_input = document.getElementById("c100");
+const c120_input = document.getElementById("c120");
+const shimei_input = document.getElementById("shimei");
+const option_input = document.getElementById("option");
+
+const baseTotal_span = document.getElementById("baseTotal");
+const expense_span = document.getElementById("expense");
+const finalTotal_span = document.getElementById("finalTotal");
+
+// リアルタイム計算
+document.querySelectorAll("input").forEach(input => {
+  input.addEventListener("input", calculate);
+});
+
+// 初期計算
+calculate();
+
 </script>
 
 </body>
