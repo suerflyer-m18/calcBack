@@ -1,6 +1,6 @@
 {
-  "name": "バック計算機",
-  "short_name": "計算機",
+  "name": "諭吉",
+  "short_name": "諭吉",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ccff99",
